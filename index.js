@@ -11,7 +11,7 @@ const server = express();
 
 server.get('/',(req,res) => {
     res.send('<h1>Welcome to the Project Database</h1>')
-})
+});
 
 //When the client makes a GET request to /api/users:
 
@@ -20,6 +20,22 @@ server.get('/',(req,res) => {
 // ---------respond with HTTP status code 500.
 // ---------return the following JSON object: 
 // ---------{ error: "The users information could not be retrieved." }.
+
+
+server.get('/users',(req,res)=>{
+    db.find()
+    .then(users => {
+        res.json(users)
+    })
+    .catch(err =>{
+        res.status(500).json({
+            err:err,
+            message: "The users information could not be retrieved"
+        })
+    })
+    
+});
+
 
 //Let's make it listen
 server.listen(4000,()=>{
