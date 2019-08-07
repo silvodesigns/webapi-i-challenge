@@ -75,6 +75,51 @@ server.get('/users/:id',(req,res)=>{
     
 });
 
+// When the client makes a POST request to /api/users:
+
+// If the request body is missing the name or bio property:
+
+// -----cancel the request.
+// -----respond with HTTP status code 400 (Bad Request).
+// -----return the following JSON response: { errorMessage: "Please provide name and bio for the user." }.
+
+// If the information about the user is valid:
+
+// -----save the new user the the database.
+// -----return HTTP status code 201 (Created).
+// -----return the newly created user document.
+
+// If there's an error while saving the user:
+// -----cancel the request.
+// -----respond with HTTP status code 500 (Server Error).
+// -----return the following JSON object: 
+//-----{ error: "There was an error while saving the user to the database" }.
+
+server.post('/users',(req,res) => {
+
+    const newUser = req.body;
+  
+
+    db.insert(newUser)
+    .then(user => {
+
+         if(newUser.name && newUser.bio){
+            res.status(201).json(user);
+           } else {
+                res.status(400).json({
+                errorMessage: "Please provide name and bio for the user"
+           })
+       }
+
+    })
+    .catch(err => {
+        res.status(500).json({
+            err: err,
+            message: 'There was an error while saving the user to the database'
+        })
+    })
+});
+
 
 //Let's make it listen
 server.listen(4000,()=>{
