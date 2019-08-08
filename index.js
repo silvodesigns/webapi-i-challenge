@@ -157,6 +157,59 @@ server.delete('/users/:id',(req,res) => {
  });
  
 
+// When the client makes a PUT request to /api/users/:id:
+
+// If the user with the specified id is not found:
+
+// -----return HTTP status code 404 (Not Found).
+// -----return the following JSON object: { message: "The user with the specified ID does not exist." }.
+
+// If the request body is missing the name or bio property:
+
+// -----cancel the request.
+// -----respond with HTTP status code 400 (Bad Request).
+// -----return the following JSON response: { errorMessage: "Please provide name and bio for the user." }.
+
+// If there's an error when updating the user:
+
+// -----cancel the request.
+// -----respond with HTTP status code 500.
+// -----return the following JSON object: { error: "The user information could not be modified." }.
+
+// If the user is found and the new information is valid:
+
+// -----update the user document in the database using the new information sent in the request body.
+// -----return HTTP status code 200 (OK).
+// -----return the newly updated user document.
+
+
+
+//PUT
+server.put('/users/:id',(req,res) => {
+
+
+    const { id } = req.params;
+    const changes = req.body;
+ 
+    db.update(id, changes)
+     .then(updated => {
+      if(updated){
+         res.json(updated);
+      } else {
+          res.status(404).json({
+              message: "The user with the specified ID does not exist"
+          })
+      }
+     })
+     .catch(err => {
+         res.status(500).json({
+             err: err,
+             message: 'The user information could not be modified.'
+         })
+     })
+ });
+ 
+
 //Let's make it listen
 server.listen(4000,()=>{
     console.log("server is running on port 4000");
